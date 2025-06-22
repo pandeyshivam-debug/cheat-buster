@@ -9,10 +9,7 @@ const MONGO_URI = process.env.MONGO_URI
 
 export const connectDB = async () => {
     try {
-        await mongoose.connect(MONGO_URI, {
-            // useNewUrlParser: true,
-            // useUnifiedTopology: true
-        })
+        await mongoose.connect(MONGO_URI)
         console.log("MongoDB connected.")
     } catch(err) {
         console.error("MongoDB connection error", err)
@@ -22,8 +19,8 @@ export const connectDB = async () => {
 
 export const seedUsers = async () => {
     try {
-        const existingUsers = await User.find()
-        if(existingUsers.length > 0) {
+        const userCount = await User.countDocuments()
+        if(userCount.length > 0) {
             console.log("Database already exists. Skipping seeding..")
             return
         }
