@@ -49,6 +49,13 @@ Cheat Buster allows you to search an email address and see if it appears in a da
   ![alt text](./screenshots/404.png)
 ---
 
+### OpenAPI documentation
+
+- **Route**: `GET /api-docs`
+  ![alt text](./screenshots/openAPI.png)
+  
+---
+
 ## Directory Structure
 
 ```
