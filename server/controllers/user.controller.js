@@ -2,18 +2,17 @@ import { z } from "zod"
 import User from "../models/user.model.js"
 
 const userEmailSchema = z.object({
-    email: z.string().nonempty("Email is required").email("Enter a valid email id")
-//     email: z.string().email("Enter a valid email id ").optional(),
-//     name: z.string().min(1, "Name can't be empty").optional()
-// }).refine(data => {
-//     data.email || data.name, {
-//         message: "Either email or name must be provided"
-//     }
+    // email: z.string().nonempty("Email is required").email("Enter a valid email id")
+    email: z.string().optional(),
+    name: z.string().optional()
+}).refine(data => {
+    return data.email || data.name, {
+        message: "Either email or name must be provided"
+    }
 })
 
 const searchUser = async (req, res) => {
     const validationResult = userEmailSchema.safeParse(req.query)
-
     if(!validationResult.success) {
         return res.status(400).json({
             error: validationResult.error.issues[0].message
@@ -23,20 +22,20 @@ const searchUser = async (req, res) => {
     const { email, name } = validationResult.data
 
     try {
-        // let foundUser
-        const foundUser = await User.findOne({email})
-        // if(email) {
-        //     foundUser = await User.findOne({email})
-        // } else if(name) {
-        //     foundUser = await User.findOne({
-        //         $expr: {
-        //             $eq: [
-        //                 { $toLower: { concat: [$firstName, " ", $lastName]}},
-        //                 name.toLowerCase
-        //             ]
-        //         }
-        //     })
-        // }
+        let foundUser
+        // const foundUser = await User.findOne({email})
+        if(email) {
+            foundUser = await User.findOne({email})
+        } else if(name) {
+            foundUser = await User.findOne({
+                $expr: {
+                    $eq: [
+                        { $toLower: { $concat: ["$firstName", " ", "$lastName"]}},
+                        name.toLowerCase()
+                    ]
+                }
+            })
+        }
         if(!foundUser) {
             return res.status(404).json({
                 message: "Phew! your partner is not on the list :)"
